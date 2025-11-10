@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaAnalisisVentas.DWH",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IoC", "IoC", "{A314A49C-DB82-47AA-ADC1-285691472C76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{70EC9806-D122-43F8-885A-AA805072BEE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalisisVentas.Api", "WebApplication1\AnalisisVentas.Api.csproj", "{70EC9806-D122-43F8-885A-AA805072BEE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection", "DependencyInjection\DependencyInjection.csproj", "{8CF992F3-7CCB-4B6B-BC1C-8A888C5FF2D6}"
 EndProject
