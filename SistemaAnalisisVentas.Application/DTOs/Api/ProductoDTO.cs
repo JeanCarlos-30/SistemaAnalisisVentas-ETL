@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Domain.Entities.API
+namespace SistemaAnalisisVentas.Application.DTOs.Api
 {
-    public class ProductoApi : BaseEntity
+    public class ProductoDTO
     {
-        public string ProductName { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
+        public int Id { get; set; }             
+        public string ProductName { get; set; }
+        public string Category { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
 

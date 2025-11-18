@@ -2,7 +2,7 @@
 using SistemaAnalisisVentas.Domain.Entities;
 using SistemaAnalisisVentas.Domain.Entities.CSV;
 
-namespace SistemaAnalisisVentas.Application.Mappers.Csv
+/*namespace SistemaAnalisisVentas.Application.Mappers.Csv
 {
     public static class DetalleVentaCsvMapper
     {
@@ -19,4 +19,4 @@ namespace SistemaAnalisisVentas.Application.Mappers.Csv
             FechaActualizacion = DateTime.UtcNow
         };
     }
-}
+}*/

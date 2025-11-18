@@ -4,22 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Domain.Entities.DB
+namespace SistemaAnalisisVentas.Application.DTOs.Api
 {
-    public class VentaDb : BaseEntity
+    public class VentaDTO
     {
-        public int OrderID { get; set; }
+        public int Id { get; set; }             
         public int ClienteId { get; set; }
-
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
-
-        public decimal Subtotal => Cantidad * PrecioUnitario;
-
         public decimal Descuento { get; set; }
-        public decimal Total => (Cantidad * PrecioUnitario) - Descuento;
-
+        public decimal Total { get; set; }
         public DateTime FechaVenta { get; set; }
     }
 }

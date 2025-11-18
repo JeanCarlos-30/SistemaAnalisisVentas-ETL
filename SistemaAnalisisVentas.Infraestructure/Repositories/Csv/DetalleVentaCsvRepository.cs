@@ -1,4 +1,4 @@
-﻿using CsvHelper;
+﻿/*using CsvHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SistemaAnalisisVentas.Application.DTOs;
@@ -80,4 +80,4 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
             return await Task.FromResult(detalles);
         }
     }
-}
+}*/

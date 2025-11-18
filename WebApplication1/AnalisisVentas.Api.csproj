@@ -1,13 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Proyecto IoC correcto -->
+
+		<!-- Proyecto Application -->
+		<ProjectReference Include="..\DependencyInjection\DependencyInjection.csproj" />
+		<ProjectReference Include="..\SistemaAnalisisVentas.Application\SistemaAnalisisVentas.Application.csproj" />
+
+		<!-- Proyecto Domain -->
+		<ProjectReference Include="..\SistemaAnalisisVentas.Domain\SistemaAnalisisVentas.Domain.csproj" />
+
+		<!-- Proyecto DWH (si lo necesitas, si no puedes quitarlo) -->
+		<ProjectReference Include="..\SistemaAnalisisVentas.DWH\SistemaAnalisisVentas.DWH.csproj" />
+		<ProjectReference Include="..\SistemaAnalisisVentas.Infraestructure\SistemaAnalisisVentas.Infrastructure.csproj" />
+
+		<!-- Proyecto Infrastructure (nombre correcto) -->
+	</ItemGroup>
 
 </Project>
