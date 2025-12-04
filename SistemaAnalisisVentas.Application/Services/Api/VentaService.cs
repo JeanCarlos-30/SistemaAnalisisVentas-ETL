@@ -1,33 +1,31 @@
-﻿using SistemaAnalisisVentas.Application.DTOs.Api;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 using SistemaAnalisisVentas.Application.Interfaces.Api;
 using SistemaAnalisisVentas.Application.Interfaces.Db;
-using SistemaAnalisisVentas.Application.Mappers.Db;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SistemaAnalisisVentas.Application.Services.Api
 {
     public class VentaService : IVentaService
     {
-        private readonly IVentaRepository _ventaRepository;
+        private readonly IVentaRepository _repo;
 
-        public VentaService(IVentaRepository ventaRepository)
+        public VentaService(IVentaRepository repo)
         {
-            _ventaRepository = ventaRepository;
+            _repo = repo;
         }
 
-        public async Task<List<VentaDTO>> ObtenerVentasAsync()
-        {
-            var ventas = await _ventaRepository.ObtenerVentasAsync();
-            return ventas.Select(VentaDbMapper.ToDto).ToList();
-        }
+        public Task<IEnumerable<VentaDTO>> ObtenerVentasAsync() =>
+            _repo.ObtenerVentasAsync();
 
-        public async Task<VentaDTO?> ObtenerVentaPorIdAsync(int id)
-        {
-            var venta = await _ventaRepository.ObtenerVentaPorIdAsync(id);
+        public Task<VentaDTO?> ObtenerVentaPorIdAsync(int id) =>
+            _repo.ObtenerVentaPorIdAsync(id);
 
-            return venta == null ? null : VentaDbMapper.ToDto(venta);
-        }
+        public Task<string> CrearVentaAsync(VentaDTO venta) =>
+            _repo.InsertarVentaAsync(venta);
+
+        public Task<string> ActualizarVentaAsync(VentaDTO venta) =>
+            _repo.ActualizarVentaAsync(venta);
+
+        public Task<string> EliminarVentaAsync(int id) =>
+            _repo.EliminarVentaAsync(id);
     }
 }

@@ -20,15 +20,14 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
         {
             _logger = logger;
 
-            // ✅ Lee la ruta base desde appsettings.json
+            // Ruta base del CSV
             var relativePath = configuration["Paths:CsvDirectoryPath"] ?? "Data\\Csv";
             _rutaCsv = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", relativePath));
         }
 
         /// <summary>
-        /// Lee todos los registros de productos desde el archivo CSV.
+        /// Lee todos los productos desde products.csv
         /// </summary>
-        /// <returns>Una lista de objetos ProductoDTO.</returns>
         public async Task<IEnumerable<ProductoDTO>> LeerProductosAsync()
         {
             var productos = new List<ProductoDTO>();
@@ -55,8 +54,7 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
                     ProductName = r.ProductName,
                     UnitPrice = r.UnitPrice,
                     UnitsInStock = r.UnitsInStock,
-                    FuenteOrigen = "CSV",
-                    FechaActualizacion = DateTime.Now
+                    FuenteID = null // CSV no trae FuenteID
                 }).ToList();
 
                 _logger.LogInformation("✅ Se leyeron {Cantidad} productos desde {Archivo}",
@@ -64,15 +62,18 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
             }
             catch (HeaderValidationException ex)
             {
-                _logger.LogError(ex, "Error en encabezados del archivo de productos ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error en encabezados del archivo de productos ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
             catch (CsvHelper.TypeConversion.TypeConverterException ex)
             {
-                _logger.LogError(ex, "Error de conversión de tipo en el archivo de productos ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error de conversión de tipo en el archivo de productos ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al leer el archivo de productos ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error inesperado al leer el archivo de productos ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
 
             return await Task.FromResult(productos);

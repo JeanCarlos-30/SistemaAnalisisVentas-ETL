@@ -1,8 +1,6 @@
-﻿using AnalisisVentas.Api.Services;
-using SistemaAnalisisVentas.Application.DTOs.Api;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 using SistemaAnalisisVentas.Application.Interfaces.Api;
 using SistemaAnalisisVentas.Application.Interfaces.Db;
-using SistemaAnalisisVentas.Application.Mappers.Api;
 
 namespace SistemaAnalisisVentas.Application.Services.Api
 {
@@ -15,16 +13,19 @@ namespace SistemaAnalisisVentas.Application.Services.Api
             _repo = repo;
         }
 
-        public async Task<List<ProductoDTO>> ObtenerProductosAsync()
-        {
-            var entities = await _repo.ObtenerProductosAsync();
-            return entities.Select(ProductoApiMapper.ToDto).ToList();
-        }
+        public Task<IEnumerable<ProductoDTO>> ObtenerProductosAsync() =>
+            _repo.ObtenerProductosAsync();
 
-        public async Task<ProductoDTO?> ObtenerProductoPorIdAsync(int id)
-        {
-            var entity = await _repo.ObtenerProductoPorIdAsync(id);
-            return entity == null ? null : ProductoApiMapper.ToDto(entity);
-        }
+        public Task<ProductoDTO?> ObtenerProductoPorIdAsync(int id) =>
+            _repo.ObtenerProductoPorIdAsync(id);
+
+        public Task<string> CrearProductoAsync(ProductoDTO producto) =>
+            _repo.InsertarProductoAsync(producto);
+
+        public Task<string> ActualizarProductoAsync(ProductoDTO producto) =>
+            _repo.ActualizarProductoAsync(producto);
+
+        public Task<string> EliminarProductoAsync(int id) =>
+            _repo.EliminarProductoAsync(id);
     }
 }

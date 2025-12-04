@@ -1,5 +1,4 @@
-﻿using AnalisisVentas.Api.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SistemaAnalisisVentas.Application.Interfaces;
@@ -9,6 +8,7 @@ using SistemaAnalisisVentas.Application.Interfaces.Repositories.Csv;
 using SistemaAnalisisVentas.Application.Interfaces.Services;
 using SistemaAnalisisVentas.Application.Services;
 using SistemaAnalisisVentas.Application.Services.Api;
+using SistemaAnalisisVentas.Application.Validators;
 using SistemaAnalisisVentas.Infrastructure.Configuration;
 using SistemaAnalisisVentas.Infrastructure.Context;
 using SistemaAnalisisVentas.Infrastructure.Repositories;
@@ -17,54 +17,53 @@ using SistemaAnalisisVentas.Infrastructure.Services;
 
 namespace SistemaAnalisisVentas.IoC
 {
-    /// <summary>
-    /// Registro central de dependencias para todas las capas del sistema ETL y API.
-    /// </summary>
     public static class DependencyInjection
     {
-        public static IServiceCollection AddSistemaAnalisisVentas(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddSistemaAnalisisVentas(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
             // ============================================================
-            //  1) REGISTRO DE CONFIGURACIÓN BASE
+            // 1) CONFIGURACIÓN GENERAL
             // ============================================================
             services.AddSingleton(new InfrastructureSettings(configuration));
 
             // ============================================================
-            //  2) REGISTRO DEL DB CONTEXT (Entity Framework Core)
+            // 2) DB CONTEXT (SQL SERVER)
             // ============================================================
             services.AddDbContext<AnalisisVentasDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // ============================================================
-            //  3) REGISTRO DE REPOSITORIOS CSV (ETL - YA EXISTENTES)
+            // 3) REPOSITORIOS CSV - ETL (Extract)
             // ============================================================
             services.AddScoped<IClienteCsvRepository, ClienteCsvRepository>();
             services.AddScoped<IProductoCsvRepository, ProductoCsvRepository>();
             services.AddScoped<IVentaCsvRepository, VentaCsvRepository>();
-            services.AddScoped<IDetalleVentaCsvRepository, DetalleVentaCsvRepository>();
+            services.AddScoped<IDetalleVentaCsvRepository, DetalleVentaCsvRepository>(); // ← 🔥 CORREGIDO
 
             // ============================================================
-            //  4) REGISTRO DE SERVICIOS DE INFRAESTRUCTURA COMUNES
+            // 4) SERVICIOS BASE (Infraestructura)
             // ============================================================
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ILogService, LogService>();
 
             // ============================================================
-            //  5) REGISTRO DE SERVICIOS ETL (Extract ya implementado)
+            // 5) SERVICIOS ETL
             // ============================================================
             services.AddScoped<IExtractionService, ExtractionService>();
-            // services.AddScoped<ITransformService, TransformService>();
-            // services.AddScoped<ILoadService, LoadService>();
+            services.AddScoped<ITransformationService, TransformationService>();
+            services.AddScoped<ILoadService, LoadService>();
 
             // ============================================================
-            //  6) REGISTRO DE REPOSITORIOS SQL (API)
+            // 6) VALIDADORES
             // ============================================================
-            services.AddScoped<IClienteRepository, ClienteRepository>();
-            services.AddScoped<IProductoRepository, ProductoRepository>();
-            services.AddScoped<IVentaRepository, VentaRepository>();
+            services.AddScoped<ClienteValidator>();
+            services.AddScoped<ProductoValidator>();
+            services.AddScoped<VentaValidator>();
 
             // ============================================================
-            //  7) REGISTRO DE SERVICIOS API
+            // 7) SERVICIOS API
             // ============================================================
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IProductoService, ProductoService>();

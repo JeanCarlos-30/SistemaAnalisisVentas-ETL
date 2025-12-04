@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Application.DTOs
+namespace SistemaAnalisisVentas.Application.DTOs.Dwh
 {
-    /// <summary>
-    /// DTO para cargar información de productos en la dimensión correspondiente del DWH.
-    /// </summary>
     public class DimProductDTO
     {
         public int ProductKey { get; set; }

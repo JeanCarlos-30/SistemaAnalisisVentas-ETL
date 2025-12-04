@@ -1,8 +1,6 @@
-﻿using AnalisisVentas.Api.Services;
-using SistemaAnalisisVentas.Application.DTOs.Api;
-using SistemaAnalisisVentas.Application.Interfaces.Api;
+﻿using SistemaAnalisisVentas.Application.Interfaces.Api;
 using SistemaAnalisisVentas.Application.Interfaces.Db;
-using SistemaAnalisisVentas.Application.Mappers.Api;
+using SistemaAnalisisVentas.Application.DTOs.Api;
 
 namespace SistemaAnalisisVentas.Application.Services.Api
 {
@@ -15,16 +13,19 @@ namespace SistemaAnalisisVentas.Application.Services.Api
             _repo = repo;
         }
 
-        public async Task<List<ClienteDTO>> ObtenerClientesAsync()
-        {
-            var entities = await _repo.ObtenerClientesAsync();
-            return entities.Select(ClienteApiMapper.ToDto).ToList();
-        }
+        public Task<IEnumerable<ClienteDTO>> ObtenerClientesAsync() =>
+            _repo.ObtenerClientesAsync();
 
-        public async Task<ClienteDTO?> ObtenerClientePorIdAsync(int id)
-        {
-            var entity = await _repo.ObtenerClientePorIdAsync(id);
-            return entity == null ? null : ClienteApiMapper.ToDto(entity);
-        }
+        public Task<ClienteDTO?> ObtenerClientePorIdAsync(int id) =>
+            _repo.ObtenerClientePorIdAsync(id);
+
+        public Task<string> CrearClienteAsync(ClienteDTO cliente) =>
+            _repo.InsertarClienteAsync(cliente);
+
+        public Task<string> ActualizarClienteAsync(ClienteDTO cliente) =>
+            _repo.ActualizarClienteAsync(cliente);
+
+        public Task<string> EliminarClienteAsync(int id) =>
+            _repo.EliminarClienteAsync(id);
     }
 }

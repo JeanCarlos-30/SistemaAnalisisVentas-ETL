@@ -1,23 +1,22 @@
-﻿using SistemaAnalisisVentas.Application.DTOs;
+﻿using SistemaAnalisisVentas.Application.DTOs.Dwh;
 using SistemaAnalisisVentas.Domain.Entities.DWH.Facts;
 
-
-//namespace SistemaAnalisisVentas.Application.Mappers.Dwh
-//{
-//    public static class FactSalesMapper
-//    {
-//        public static FactSales ToEntity(VentaDTO dto, int productKey, int customerKey, int dateKey, int sourceKey)
-//        {
-//            return new FactSales
-//            {
-//                ProductKey = productKey,
-//                CustomerKey = customerKey,
-//                DateKey = dto.FechaVenta,
-//                SourceKey = sourceKey,
-//                Quantity = dto.Cantidad,
-//                UnitPrice = dto.PrecioUnitario,
-//                Discount = dto.Descuento
-//            };
-//        }
-//    }
-//}
+namespace SistemaAnalisisVentas.Application.Mappers.Dwh
+{
+    public static class FactSalesMapper
+    {
+        public static FactSales ToEntity(FactSalesDTO dto)
+        {
+            return new FactSales
+            {
+                ProductKey = dto.ProductKey,
+                CustomerKey = dto.CustomerKey,
+                DateKey = dto.DateKey,
+                SourceKey = dto.SourceKey,
+                Quantity = dto.Quantity,
+                UnitPrice = dto.UnitPrice,
+                Discount = dto.Discount
+            };
+        }
+    }
+}

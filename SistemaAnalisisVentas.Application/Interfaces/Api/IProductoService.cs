@@ -1,10 +1,13 @@
-﻿using SistemaAnalisisVentas.Application.DTOs.Api;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 
-namespace AnalisisVentas.Api.Services
+namespace SistemaAnalisisVentas.Application.Interfaces.Api
 {
     public interface IProductoService
     {
-        Task<List<ProductoDTO>> ObtenerProductosAsync();
+        Task<IEnumerable<ProductoDTO>> ObtenerProductosAsync();
         Task<ProductoDTO?> ObtenerProductoPorIdAsync(int id);
+        Task<string> CrearProductoAsync(ProductoDTO producto);
+        Task<string> ActualizarProductoAsync(ProductoDTO producto);
+        Task<string> EliminarProductoAsync(int id);
     }
 }

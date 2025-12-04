@@ -11,17 +11,19 @@
         // =========================
         public const string ClienteNulo = "El cliente no puede ser nulo.";
         public const string ClienteIdInvalido = "El identificador del cliente (CustomerID) es obligatorio.";
-        public const string ClienteNombreInvalido = "El nombre de la empresa (CompanyName) no es válido (debe tener al menos 2 caracteres).";
+        public const string ClienteNombreInvalido = "El nombre del cliente (FirstName) no es válido.";
+        public const string ClienteApellidoInvalido = "El apellido (LastName) no es válido.";
         public const string ClienteUbicacionInvalida = "El cliente debe tener al menos una ciudad (City) o país (Country) definido.";
+
 
         // =========================
         // PRODUCTO
         // =========================
         public const string ProductoNulo = "El producto no puede ser nulo.";
-        public const string ProductoIdInvalido = "El identificador del producto (ProductID) es obligatorio.";
-        public const string ProductoNombreInvalido = "El nombre del producto (ProductName) no es válido.";
-        public const string ProductoPrecioInvalido = "El precio unitario (UnitPrice) debe ser mayor que cero.";
-        public const string ProductoStockInvalido = "La cantidad en inventario (UnitsInStock) no puede ser negativa.";
+        public const string ProductoIdInvalido = "El identificador del producto (ProductID) es obligatorio y debe ser mayor que cero.";
+        public const string ProductoNombreInvalido = "El nombre del producto (ProductName) no puede estar vacío.";
+        public const string ProductoPrecioInvalido = "El precio del producto (Price) debe ser mayor que cero.";
+        public const string ProductoStockInvalido = "El inventario del producto (Stock) no puede ser negativo.";
 
         // =========================
         // VENTA
@@ -37,9 +39,7 @@
         // =========================
         public const string DetalleNulo = "El detalle de venta no puede ser nulo.";
         public const string DetalleRelacionInvalida = "El detalle debe tener OrderID y ProductID válidos.";
-        public const string DetallePrecioInvalido = "El precio unitario (UnitPrice) debe ser mayor que cero.";
         public const string DetalleCantidadInvalida = "La cantidad (Quantity) debe ser mayor que cero.";
-        public const string DetalleDescuentoInvalido = "El descuento (Discount) debe estar entre 0 y 1.";
-        public const string DetalleSubtotalInvalido = "El subtotal calculado del detalle de venta es inválido.";
+        public const string DetallePrecioInvalido = "El precio total (TotalPrice) debe ser mayor o igual que cero.";
     }
 }

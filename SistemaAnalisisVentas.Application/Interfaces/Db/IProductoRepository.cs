@@ -1,12 +1,13 @@
-﻿using SistemaAnalisisVentas.Domain.Entities.API;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 
 namespace SistemaAnalisisVentas.Application.Interfaces.Db
 {
     public interface IProductoRepository
     {
-        Task<List<ProductoApi>> ObtenerProductosAsync();
-        Task<ProductoApi?> ObtenerProductoPorIdAsync(int id);
+        Task<IEnumerable<ProductoDTO>> ObtenerProductosAsync();
+        Task<ProductoDTO?> ObtenerProductoPorIdAsync(int id);
+        Task<string> InsertarProductoAsync(ProductoDTO producto);
+        Task<string> ActualizarProductoAsync(ProductoDTO producto);
+        Task<string> EliminarProductoAsync(int id);
     }
 }

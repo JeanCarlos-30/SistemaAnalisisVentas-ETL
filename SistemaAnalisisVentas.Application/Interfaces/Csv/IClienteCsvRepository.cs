@@ -1,4 +1,5 @@
 ﻿using SistemaAnalisisVentas.Application.DTOs;
+using SistemaAnalisisVentas.Application.DTOs.Api;
 
 namespace SistemaAnalisisVentas.Application.Interfaces.Repositories.Csv
 {

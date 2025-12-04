@@ -11,13 +11,14 @@ namespace SistemaAnalisisVentas.Application.DTOs
     /// </summary>
     public class ProductoDTO
     {
-        public int Id { get; set; }
         public int ProductID { get; set; }
         public string ProductName { get; set; } = string.Empty;
+        public string? Category { get; set; }
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+        public int? FuenteID { get; set; }
         public decimal UnitPrice { get; set; }
-        public short UnitsInStock { get; set; }
-        public string? FuenteOrigen { get; set; }
-        public DateTime? FechaActualizacion { get; set; }
+        public int UnitsInStock { get; set; }
     }
 }
 

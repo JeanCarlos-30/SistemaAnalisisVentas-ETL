@@ -20,15 +20,13 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
         {
             _logger = logger;
 
-            // ✅ Ruta configurable desde appsettings.json
             var relativePath = configuration["Paths:CsvDirectoryPath"] ?? "Data\\Csv";
             _rutaCsv = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", relativePath));
         }
 
         /// <summary>
-        /// Lee todos los registros de ventas desde el archivo CSV.
+        /// Lee todas las ventas desde sales.csv
         /// </summary>
-        /// <returns>Una lista de objetos VentaDTO.</returns>
         public async Task<IEnumerable<VentaDTO>> LeerVentasAsync()
         {
             var ventas = new List<VentaDTO>();
@@ -36,11 +34,11 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
 
             try
             {
-                _logger.LogInformation("📂 Iniciando lectura de ventas desde {Ruta}", rutaArchivo);
+                _logger.LogInformation(" Iniciando lectura de ventas desde {Ruta}", rutaArchivo);
 
                 if (!File.Exists(rutaArchivo))
                 {
-                    _logger.LogError("❌ No se encontró el archivo CSV de ventas en {Ruta}", rutaArchivo);
+                    _logger.LogError(" No se encontró el archivo CSV de ventas en {Ruta}", rutaArchivo);
                     return ventas;
                 }
 
@@ -55,24 +53,26 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
                     CustomerID = r.CustomerID,
                     OrderDate = r.OrderDate,
                     ShipCountry = r.ShipCountry,
-                    FuenteOrigen = "CSV",
-                    FechaActualizacion = DateTime.Now
+                    FuenteID = null // dato no proviene del CSV
                 }).ToList();
 
-                _logger.LogInformation("✅ Se leyeron {Cantidad} ventas desde {Archivo}",
+                _logger.LogInformation(" Se leyeron {Cantidad} ventas desde {Archivo}",
                     ventas.Count, Path.GetFileName(rutaArchivo));
             }
             catch (HeaderValidationException ex)
             {
-                _logger.LogError(ex, "Error en encabezados del archivo de ventas ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error en encabezados del archivo de ventas ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
             catch (CsvHelper.TypeConversion.TypeConverterException ex)
             {
-                _logger.LogError(ex, "Error de conversión de tipo en el archivo de ventas ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error de conversión de tipo en el archivo de ventas ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al leer el archivo de ventas ({Archivo})", Path.GetFileName(rutaArchivo));
+                _logger.LogError(ex, "Error inesperado al leer el archivo de ventas ({Archivo})",
+                    Path.GetFileName(rutaArchivo));
             }
 
             return await Task.FromResult(ventas);

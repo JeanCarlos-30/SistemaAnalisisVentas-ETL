@@ -9,9 +9,9 @@
         public int OrderID { get; set; }
         public int ProductID { get; set; }
         public decimal UnitPrice { get; set; }
-        public short Quantity { get; set; }
-        public float Discount { get; set; }
-        public decimal Subtotal { get; set; } // Calculado
+        public int Quantity { get; set; }        //  Cambiar short → int
+        public decimal Discount { get; set; }    //  Cambiar float → decimal
+        public decimal Subtotal { get; set; }    //  decimal está bien
         public string? FuenteOrigen { get; set; }
         public DateTime? FechaActualizacion { get; set; }
     }

@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Application.DTOs
+namespace SistemaAnalisisVentas.Application.DTOs.Dwh
 {
-    /// <summary>
-    /// DTO para cargar datos en la dimensión de clientes del DWH.
-    /// </summary>
     public class DimCustomerDTO
     {
         public int CustomerKey { get; set; }
@@ -20,4 +17,3 @@ namespace SistemaAnalisisVentas.Application.DTOs
         public string Country { get; set; } = string.Empty;
     }
 }
-

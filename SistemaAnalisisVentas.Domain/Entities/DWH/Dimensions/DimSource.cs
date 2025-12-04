@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace SistemaAnalisisVentas.Domain.Entities.DWH.Dimensions
 {
-    public class DimSource : BaseEntity
+    public class DimSource
     {
-        public string SourceName { get; set; } = string.Empty;
-        public string SourceType { get; set; } = string.Empty;
+        public int SourceKey { get; set; }        // PK (hash de SourceName + SourceType)
+        public string SourceName { get; set; } = null!;
+        public string SourceType { get; set; } = null!;
         public DateTime LoadDate { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public string Status { get; set; } = null!;
     }
 }

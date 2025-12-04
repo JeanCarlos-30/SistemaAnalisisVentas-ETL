@@ -1,10 +1,13 @@
 ﻿using SistemaAnalisisVentas.Application.DTOs.Api;
 
-namespace AnalisisVentas.Api.Services
+namespace SistemaAnalisisVentas.Application.Interfaces.Api
 {
     public interface IClienteService
     {
-        Task<List<ClienteDTO>> ObtenerClientesAsync();
+        Task<IEnumerable<ClienteDTO>> ObtenerClientesAsync();
         Task<ClienteDTO?> ObtenerClientePorIdAsync(int id);
+        Task<string> CrearClienteAsync(ClienteDTO cliente);
+        Task<string> ActualizarClienteAsync(ClienteDTO cliente);
+        Task<string> EliminarClienteAsync(int id);
     }
 }

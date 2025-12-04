@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Application.DTOs
+namespace SistemaAnalisisVentas.Application.DTOs.Dwh
 {
-    /// <summary>
-    /// DTO para cargar las fechas de transacciones en la dimensión de tiempo del DWH.
-    /// </summary>
     public class DimDateDTO
     {
         public DateTime DateKey { get; set; }
@@ -21,4 +18,3 @@ namespace SistemaAnalisisVentas.Application.DTOs
         public string DayName { get; set; } = string.Empty;
     }
 }
-

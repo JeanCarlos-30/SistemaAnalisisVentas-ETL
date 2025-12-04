@@ -1,12 +1,13 @@
-﻿using SistemaAnalisisVentas.Domain.Entities.DB;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 
 namespace SistemaAnalisisVentas.Application.Interfaces.Db
 {
     public interface IVentaRepository
     {
-        Task<List<VentaDb>> ObtenerVentasAsync();
-        Task<VentaDb?> ObtenerVentaPorIdAsync(int id);
+        Task<IEnumerable<VentaDTO>> ObtenerVentasAsync();
+        Task<VentaDTO?> ObtenerVentaPorIdAsync(int id);
+        Task<string> InsertarVentaAsync(VentaDTO venta);
+        Task<string> ActualizarVentaAsync(VentaDTO venta);
+        Task<string> EliminarVentaAsync(int id);
     }
 }

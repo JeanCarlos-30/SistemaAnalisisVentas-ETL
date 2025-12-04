@@ -1,4 +1,4 @@
-﻿/*using CsvHelper;
+﻿using CsvHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SistemaAnalisisVentas.Application.DTOs;
@@ -20,7 +20,7 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
         {
             _logger = logger;
 
-            // ✅ Lee la ruta base del appsettings.json
+            //  Lee la ruta base del appsettings.json
             var relativePath = configuration["Paths:CsvDirectoryPath"] ?? "Data\\Csv";
             _rutaCsv = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", relativePath));
         }
@@ -36,11 +36,11 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
 
             try
             {
-                _logger.LogInformation("📂 Iniciando lectura de detalles de venta desde {Ruta}", rutaArchivo);
+                _logger.LogInformation(" Iniciando lectura de detalles de venta desde {Ruta}", rutaArchivo);
 
                 if (!File.Exists(rutaArchivo))
                 {
-                    _logger.LogError("❌ No se encontró el archivo CSV de detalles de venta en {Ruta}", rutaArchivo);
+                    _logger.LogError(" No se encontró el archivo CSV de detalles de venta en {Ruta}", rutaArchivo);
                     return detalles;
                 }
 
@@ -61,7 +61,7 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
                     FechaActualizacion = DateTime.Now
                 }).ToList();
 
-                _logger.LogInformation("✅ Se leyeron {Cantidad} detalles de venta desde {Archivo}",
+                _logger.LogInformation(" Se leyeron {Cantidad} detalles de venta desde {Archivo}",
                     detalles.Count, Path.GetFileName(rutaArchivo));
             }
             catch (HeaderValidationException ex)
@@ -80,4 +80,4 @@ namespace SistemaAnalisisVentas.Infrastructure.Repositories.Csv
             return await Task.FromResult(detalles);
         }
     }
-}*/
+}

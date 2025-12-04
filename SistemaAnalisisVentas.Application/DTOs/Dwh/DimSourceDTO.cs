@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaAnalisisVentas.Application.DTOs
+namespace SistemaAnalisisVentas.Application.DTOs.Dwh
 {
-    /// <summary>
-    /// DTO que representa la información de trazabilidad de carga ETL.
-    /// </summary>
     public class DimSourceDTO
     {
         public int SourceKey { get; set; }
@@ -18,4 +15,3 @@ namespace SistemaAnalisisVentas.Application.DTOs
         public string Status { get; set; } = string.Empty;
     }
 }
-

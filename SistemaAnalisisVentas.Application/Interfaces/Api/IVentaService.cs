@@ -1,12 +1,13 @@
-﻿using SistemaAnalisisVentas.Application.DTOs.Api;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using SistemaAnalisisVentas.Application.DTOs;
 
 namespace SistemaAnalisisVentas.Application.Interfaces.Api
 {
     public interface IVentaService
     {
-        Task<List<VentaDTO>> ObtenerVentasAsync();
+        Task<IEnumerable<VentaDTO>> ObtenerVentasAsync();
         Task<VentaDTO?> ObtenerVentaPorIdAsync(int id);
+        Task<string> CrearVentaAsync(VentaDTO venta);
+        Task<string> ActualizarVentaAsync(VentaDTO venta);
+        Task<string> EliminarVentaAsync(int id);
     }
 }

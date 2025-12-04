@@ -8,14 +8,20 @@ namespace SistemaAnalisisVentas.Application.DTOs.Api
 {
     public class ClienteDTO
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
+        public int CustomerID { get; set; }
 
-        public string Region => $"{City}, {Country}";
+        public string FirstName { get; set; } = string.Empty;
+
+        public string LastName { get; set; } = string.Empty;
+
+        public string? Email { get; set; }
+
+        public string? Phone { get; set; }
+
+        public string? City { get; set; }
+
+        public string? Country { get; set; }
+
+        public int? FuenteID { get; set; }
     }
 }
