@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace SistemaAnalisisVentas.Domain.Entities.DWH.Facts
 {
-    public class FactSales : BaseEntity
+    public class FactSales
     {
+        public int SalesKey { get; set; }
         public int ProductKey { get; set; }
         public int CustomerKey { get; set; }
         public DateTime DateKey { get; set; }
@@ -15,6 +16,5 @@ namespace SistemaAnalisisVentas.Domain.Entities.DWH.Facts
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
-        public decimal Total => (Quantity * UnitPrice) - Discount;
     }
 }

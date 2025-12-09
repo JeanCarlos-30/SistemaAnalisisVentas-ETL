@@ -13,5 +13,7 @@ namespace SistemaAnalisisVentas.Application.Interfaces
         Task<List<DimProductDTO>> TransformarProductosAsync();
         Task<List<DimCustomerDTO>> TransformarClientesAsync();
         Task<List<FactSalesDTO>> TransformarVentasAsync();
+        List<DimDateDTO> GenerarDimDate(DateTime inicio, DateTime fin);
+
     }
 }

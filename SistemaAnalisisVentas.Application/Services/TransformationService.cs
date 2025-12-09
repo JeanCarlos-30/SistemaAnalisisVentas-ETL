@@ -7,10 +7,6 @@ using SistemaAnalisisVentas.Application.Validators;
 
 namespace SistemaAnalisisVentas.Application.Services
 {
-    /// <summary>
-    /// Servicio encargado de transformar, validar y preparar los datos extraídos
-    /// para insertarlos en el Data Warehouse.
-    /// </summary>
     public class TransformationService : ITransformationService
     {
         private readonly ClienteValidator _clienteValidator;
@@ -28,15 +24,11 @@ namespace SistemaAnalisisVentas.Application.Services
         }
 
         // ===============================================================
-        //   MÉTODOS OBLIGATORIOS DE LA INTERFAZ
+        //  VALIDACIÓN GENERAL
         // ===============================================================
-
-        /// <summary>
-        /// Realiza validaciones generales de datos antes del proceso ETL.
-        /// </summary>
         public async Task TransformAndValidateAsync()
         {
-            LoggerHelper.Info(" Iniciando TransformAndValidateAsync...");
+            LoggerHelper.Info("🔍 Iniciando TransformAndValidateAsync...");
 
             var productos = await ObtenerProductosAsync();
             var clientes = await ObtenerClientesAsync();
@@ -46,38 +38,31 @@ namespace SistemaAnalisisVentas.Application.Services
             int validCustomers = clientes.Count(c => _clienteValidator.EsValido(c));
             int validSales = ventas.Count(v => _ventaValidator.EsValido(v));
 
-            LoggerHelper.Info($" Productos válidos: {validProducts}/{productos.Count}");
-            LoggerHelper.Info($" Clientes válidos: {validCustomers}/{clientes.Count}");
-            LoggerHelper.Info($" Ventas válidas: {validSales}/{ventas.Count}");
+            LoggerHelper.Info($"✔ Productos válidos: {validProducts}/{productos.Count}");
+            LoggerHelper.Info($"✔ Clientes válidos: {validCustomers}/{clientes.Count}");
+            LoggerHelper.Info($"✔ Ventas válidas: {validSales}/{ventas.Count}");
 
-            LoggerHelper.Info(" Validación general completada.");
+            LoggerHelper.Info("✔ Validación general completada.");
         }
 
-        /// <summary>
-        /// Calcula valores derivados o agregados necesarios para métricas del DWH.
-        /// </summary>
         public async Task ComputeDerivedValuesAsync()
         {
             LoggerHelper.Info("Calculando valores derivados...");
-
-            await Task.Delay(50); // Simulación
-
-            LoggerHelper.Info("Valores derivados calculados.");
+            await Task.Delay(30);
+            LoggerHelper.Info("✔ Cálculo completado.");
         }
 
         // ===============================================================
-        //   TRANSFORMACIÓN A DIMENSIONES
+        //  TRANSFORMACIONES A DIMENSIONES
         // ===============================================================
 
-        /// <summary>
-        /// Transforma los productos extraídos en DimProductDTO.
-        /// </summary>
+        // ----------- DIM PRODUCT -----------
         public async Task<List<DimProductDTO>> TransformarProductosAsync()
         {
-            var productosOrigen = await ObtenerProductosAsync();
+            var origen = await ObtenerProductosAsync();
             var resultado = new List<DimProductDTO>();
 
-            foreach (var p in productosOrigen)
+            foreach (var p in origen)
             {
                 if (!_productoValidator.EsValido(p))
                     continue;
@@ -93,19 +78,17 @@ namespace SistemaAnalisisVentas.Application.Services
                 });
             }
 
-            LoggerHelper.Info($"Productos transformados: {resultado.Count}");
+            LoggerHelper.Info($"✔ Productos transformados: {resultado.Count}");
             return resultado;
         }
 
-        /// <summary>
-        /// Transforma clientes a DimCustomerDTO.
-        /// </summary>
+        // ----------- DIM CUSTOMER -----------
         public async Task<List<DimCustomerDTO>> TransformarClientesAsync()
         {
-            var clientesOrigen = await ObtenerClientesAsync();
+            var origen = await ObtenerClientesAsync();
             var resultado = new List<DimCustomerDTO>();
 
-            foreach (var c in clientesOrigen)
+            foreach (var c in origen)
             {
                 if (!_clienteValidator.EsValido(c))
                     continue;
@@ -122,60 +105,94 @@ namespace SistemaAnalisisVentas.Application.Services
                 });
             }
 
-            LoggerHelper.Info($"Clientes transformados: {resultado.Count}");
+            LoggerHelper.Info($"✔ Clientes transformados: {resultado.Count}");
             return resultado;
         }
 
-        /// <summary>
-        /// Transforma ventas a una fact table temporal.
-        /// </summary>
+        // ----------- DIM DATE -----------
+        public List<DimDateDTO> GenerarDimDate(DateTime inicio, DateTime fin)
+        {
+            var lista = new List<DimDateDTO>();
+
+            for (var fecha = inicio; fecha <= fin; fecha = fecha.AddDays(1))
+            {
+                lista.Add(new DimDateDTO
+                {
+                    DateKey = int.Parse(fecha.ToString("yyyyMMdd")),
+                    FullDate = fecha.Date,
+                    DayNumber = fecha.Day,
+                    MonthNumber = fecha.Month,
+                    MonthName = fecha.ToString("MMMM"),
+                    Quarter = (fecha.Month - 1) / 3 + 1,
+                    Year = fecha.Year,
+                    DayName = fecha.ToString("dddd")
+                });
+            }
+
+            LoggerHelper.Info($"✔ Fechas generadas: {lista.Count}");
+            return lista;
+        }
+
+
+        // ----------- FACT SALES -----------
         public async Task<List<FactSalesDTO>> TransformarVentasAsync()
         {
-            var ventasOrigen = await ObtenerVentasAsync();
+            var ventas = await ObtenerVentasAsync();
+            var detalles = await ObtenerDetallesAsync();
+
             var resultado = new List<FactSalesDTO>();
 
-            foreach (var v in ventasOrigen)
+            foreach (var v in ventas)
             {
                 if (!_ventaValidator.EsValido(v))
                     continue;
 
+                var detalle = detalles.FirstOrDefault(d => d.OrderID == v.OrderID);
+                if (detalle == null)
+                    continue;
+
                 resultado.Add(new FactSalesDTO
                 {
-                    ProductKey = v.OrderID.GetHashCode(),     
+                    ProductKey = detalle.ProductID.GetHashCode(),
                     CustomerKey = v.CustomerID.GetHashCode(),
                     DateKey = v.OrderDate ?? DateTime.UtcNow,
-                    SourceKey = 1,                            
-                    Quantity = 1,                             
-                    UnitPrice = 0,                           
-                    Discount = 0
+                    SourceKey = 1,
+                    Quantity = detalle.Quantity,
+                    UnitPrice = detalle.UnitPrice,
+                    Discount = detalle.Discount
                 });
             }
 
-            LoggerHelper.Info($"Ventas transformadas: {resultado.Count}");
+            LoggerHelper.Info($"✔ Ventas transformadas a FactSales: {resultado.Count}");
             return resultado;
         }
 
-
         // ===============================================================
-        //   MÉTODOS TEMPORALES (SE REEMPLAZAN EN EXTRACT)
+        //  MÉTODOS TEMPORALES (LUEGO VIENEN DE EXTRACT)
         // ===============================================================
 
         private async Task<List<ClienteDTO>> ObtenerClientesAsync()
         {
             await Task.Delay(5);
-            return new List<ClienteDTO>(); // se llenará desde ExtractionService
+            return new List<ClienteDTO>();
         }
 
         private async Task<List<ProductoDTO>> ObtenerProductosAsync()
         {
             await Task.Delay(5);
-            return new List<ProductoDTO>(); // se llenará desde ExtractionService
+            return new List<ProductoDTO>();
         }
 
         private async Task<List<VentaDTO>> ObtenerVentasAsync()
         {
             await Task.Delay(5);
-            return new List<VentaDTO>(); // se llenará desde ExtractionService
+            return new List<VentaDTO>();
+        }
+
+        private async Task<List<DetalleVentaDTO>> ObtenerDetallesAsync()
+        {
+            await Task.Delay(5);
+            return new List<DetalleVentaDTO>();
         }
     }
 }

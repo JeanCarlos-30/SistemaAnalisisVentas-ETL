@@ -8,7 +8,7 @@ namespace SistemaAnalisisVentas.Application.DTOs.Dwh
 {
     public class DimDateDTO
     {
-        public DateTime DateKey { get; set; }
+        public int DateKey { get; set; }
         public DateTime FullDate { get; set; }
         public int DayNumber { get; set; }
         public int MonthNumber { get; set; }

@@ -24,50 +24,59 @@ namespace SistemaAnalisisVentas.IoC
             IConfiguration configuration)
         {
             // ============================================================
-            // 1) CONFIGURACIÓN GENERAL
+            // CONFIG GENERAL
             // ============================================================
             services.AddSingleton(new InfrastructureSettings(configuration));
 
             // ============================================================
-            // 2) DB CONTEXT (SQL SERVER)
+            // DB CONTEXT
             // ============================================================
             services.AddDbContext<AnalisisVentasDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            // FIX DEL ERROR — registrar DbContext genérico
+            services.AddScoped<DbContext>(provider =>
+                provider.GetRequiredService<AnalisisVentasDbContext>());
+
             // ============================================================
-            // 3) REPOSITORIOS CSV - ETL (Extract)
+            // REPOS CSV - ETL
             // ============================================================
             services.AddScoped<IClienteCsvRepository, ClienteCsvRepository>();
             services.AddScoped<IProductoCsvRepository, ProductoCsvRepository>();
             services.AddScoped<IVentaCsvRepository, VentaCsvRepository>();
-            services.AddScoped<IDetalleVentaCsvRepository, DetalleVentaCsvRepository>(); // ← 🔥 CORREGIDO
+            services.AddScoped<IDetalleVentaCsvRepository, DetalleVentaCsvRepository>();
 
             // ============================================================
-            // 4) SERVICIOS BASE (Infraestructura)
+            // SERVICIOS BASE
             // ============================================================
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ILogService, LogService>();
 
             // ============================================================
-            // 5) SERVICIOS ETL
+            // SERVICIOS ETL
             // ============================================================
             services.AddScoped<IExtractionService, ExtractionService>();
             services.AddScoped<ITransformationService, TransformationService>();
             services.AddScoped<ILoadService, LoadService>();
 
             // ============================================================
-            // 6) VALIDADORES
+            // VALIDADORES
             // ============================================================
             services.AddScoped<ClienteValidator>();
             services.AddScoped<ProductoValidator>();
             services.AddScoped<VentaValidator>();
 
             // ============================================================
-            // 7) SERVICIOS API
+            // SERVICIOS API
             // ============================================================
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IProductoService, ProductoService>();
             services.AddScoped<IVentaService, VentaService>();
+
+            // ============================================================
+            // ETL ORCHESTRATOR
+            // ============================================================
+            services.AddScoped<IETLOrchestratorService, ETLOrchestratorService>();
 
             return services;
         }

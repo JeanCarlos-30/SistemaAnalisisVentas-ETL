@@ -11,129 +11,135 @@ namespace SistemaAnalisisVentas.Application.Services
     public class LoadService : ILoadService
     {
         private readonly DbContext _context;
+        private readonly ITransformationService _transformService;
         private const int BatchSize = 1000;
 
-        public LoadService(DbContext context)
+        public LoadService(DbContext context, ITransformationService transformService)
         {
             _context = context;
+            _transformService = transformService;
         }
 
-        // =====================================================
-        // 1. CARGA DE DIMENSIONES
-        // =====================================================
+        // ============================================================
+        // 🔹 1. CARGA DE DIMENSIONES: CUSTOMER, PRODUCT, DATE
+        // ============================================================
         public async Task LoadDimensionsAsync()
         {
             try
             {
-                LoggerHelper.Info("Iniciando carga de dimensiones...");
+                LoggerHelper.Info("=== Iniciando carga de Dimensiones ===");
 
-                var clientes = await ObtenerClientesTransformadosAsync();
-                var productos = await ObtenerProductosTransformadosAsync();
-                var fechas = await ObtenerFechasTransformadasAsync();
+                // ---------------- DIM CUSTOMER ----------------
+                var dimCustomers = await _transformService.TransformarClientesAsync();
+                await CargarPorLotesAsync(
+                    dimCustomers.Select(DimCustomerMapper.ToEntity).ToList(),
+                    nameof(DimCustomer)
+                );
 
-                await CargarPorLotesAsync(clientes.Select(DimCustomerMapper.ToEntity).ToList(), "DimCustomers");
-                await CargarPorLotesAsync(productos.Select(DimProductMapper.ToEntity).ToList(), "DimProducts");
-                await CargarPorLotesAsync(fechas.Select(DimDateMapper.ToEntity).ToList(), "DimDate");
+                // ---------------- DIM PRODUCT ----------------
+                var dimProducts = await _transformService.TransformarProductosAsync();
+                await CargarPorLotesAsync(
+                    dimProducts.Select(DimProductMapper.ToEntity).ToList(),
+                    nameof(DimProduct)
+                );
 
-                LoggerHelper.Info("Carga de dimensiones completada.");
+                // ---------------- DIM DATE ----------------
+                var fechaMin = new DateTime(2020, 1, 1);
+                var fechaMax = DateTime.UtcNow.AddYears(1);
+                var dimDates = _transformService.GenerarDimDate(fechaMin, fechaMax);
+
+                await CargarPorLotesAsync(
+                    dimDates.Select(DimDateMapper.ToEntity).ToList(),
+                    nameof(DimDate)
+                );
+
+                LoggerHelper.Info("✔ Dimensiones cargadas exitosamente.");
             }
             catch (Exception ex)
             {
-                LoggerHelper.Error("Error durante la carga de dimensiones.", ex);
+                LoggerHelper.Error("❌ Error durante la carga de dimensiones", ex);
                 throw;
             }
         }
 
-        // =====================================================
-        // 2. CARGA DE FACT SALES
-        // =====================================================
+        // ============================================================
+        // 🔹 2. CARGA DE FACT SALES
+        // ============================================================
         public async Task LoadFactsAsync()
         {
             try
             {
-                LoggerHelper.Info("Iniciando carga de hechos (FactSales)...");
+                LoggerHelper.Info("=== Iniciando carga de FACT SALES ===");
 
-                var factsDto = await ObtenerFactSalesTransformadosAsync();
-                var facts = factsDto.Select(FactSalesMapper.ToEntity).ToList();
+                var factDtos = await _transformService.TransformarVentasAsync();
+                var facts = factDtos.Select(FactSalesMapper.ToEntity).ToList();
 
-                await CargarPorLotesAsync(facts, "FactSales");
+                await CargarPorLotesAsync(facts, nameof(FactSales));
 
-                LoggerHelper.Info("Carga de hechos completada.");
+                LoggerHelper.Info("✔ FactSales cargadas correctamente.");
             }
             catch (Exception ex)
             {
-                LoggerHelper.Error("Error durante la carga de hechos.", ex);
+                LoggerHelper.Error("❌ Error durante la carga de FactSales", ex);
                 throw;
             }
         }
 
-        // =====================================================
-        // 3. REGISTRO DEL ESTADO (DIM SOURCE)
-        // =====================================================
+        // ============================================================
+        // 🔹 3. REGISTRO EN DIM SOURCE
+        // ============================================================
         public async Task RegisterLoadStatusAsync()
         {
             try
             {
-                LoggerHelper.Info("Registrando estado de carga...");
+                LoggerHelper.Info("Registrando estado de carga en DimSource...");
 
-                var source = DimSourceMapper.ToEntity("Proceso ETL Ventas", "LOAD", "Completado");
-                _context.Set<DimSource>().Add(source);
+                var registro = DimSourceMapper.ToEntity(
+                    "ETL Ventas",
+                    "LOAD",
+                    "Completado"
+                );
 
+                _context.Set<DimSource>().Add(registro);
                 await _context.SaveChangesAsync();
-                LoggerHelper.Info("Estado de carga registrado.");
+
+                LoggerHelper.Info("✔ Estado de carga registrado correctamente.");
             }
             catch (Exception ex)
             {
-                LoggerHelper.Error("Error al registrar el estado.", ex);
+                LoggerHelper.Error("❌ Error al registrar DimSource", ex);
                 throw;
             }
         }
 
-        // =====================================================
-        // MÉTODOS AUXILIARES
-        // =====================================================
-        private async Task CargarPorLotesAsync<T>(List<T> entidades, string tabla) where T : class
+        // ============================================================
+        // 🔹 MÉTODO DE CARGA POR LOTES
+        // ============================================================
+        private async Task CargarPorLotesAsync<T>(List<T> entidades, string nombreTabla) where T : class
         {
+            if (entidades == null || entidades.Count == 0)
+            {
+                LoggerHelper.Warning($"⚠ No hay registros para insertar en {nombreTabla}");
+                return;
+            }
+
+            LoggerHelper.Info($"Iniciando carga por lotes → {nombreTabla} ({entidades.Count} registros)");
+
             int total = entidades.Count;
             int procesados = 0;
 
             while (procesados < total)
             {
                 var lote = entidades.Skip(procesados).Take(BatchSize).ToList();
+
                 await _context.Set<T>().AddRangeAsync(lote);
                 await _context.SaveChangesAsync();
 
                 procesados += lote.Count;
-                LoggerHelper.Info($"Cargados {procesados}/{total} registros en {tabla}.");
+                LoggerHelper.Info($"✔ {procesados}/{total} registros cargados en {nombreTabla}");
             }
-        }
 
-        // =====================================================
-        // ESTAS FUNCIONES SE REEMPLAZAN POR TransformationService
-        // =====================================================
-
-        private async Task<List<DimCustomerDTO>> ObtenerClientesTransformadosAsync()
-        {
-            await Task.Delay(10);
-            return new List<DimCustomerDTO>();
-        }
-
-        private async Task<List<DimProductDTO>> ObtenerProductosTransformadosAsync()
-        {
-            await Task.Delay(10);
-            return new List<DimProductDTO>();
-        }
-
-        private async Task<List<DimDateDTO>> ObtenerFechasTransformadasAsync()
-        {
-            await Task.Delay(10);
-            return new List<DimDateDTO>();
-        }
-
-        private async Task<List<FactSalesDTO>> ObtenerFactSalesTransformadosAsync()
-        {
-            await Task.Delay(10);
-            return new List<FactSalesDTO>();
+            LoggerHelper.Info($"✔ Carga finalizada en {nombreTabla}");
         }
     }
 }
